@@ -12,7 +12,56 @@ const findAll = async (req, res) => {
 
     return data;
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    return error;
+  }
+};
+
+const add = async(title, genres, year) =>{
+  try {
+    if(!title || !genres || !year){
+      res.status(400).json({message: "Bad Request"})
+    } else {
+      const result = await pool.query(
+        `
+        INSERT INTO
+          movies
+            (title, genres, year)
+          VALUES
+            ($1, $2, $3)
+        `,
+        [title, genres, year]
+      )
+
+      return result;
+    }
+  } catch (error) {
+    return error;
+  }
+}
+
+const update = async (id, title, genres, year) => {
+  try {
+    if (!title || !genres || !year) {
+      res.status(400).json({ message: "Bad Request" });
+    } else {
+      const result = await pool.query(
+        `
+        UPDATE
+          movies
+        SET
+          title = $1,
+          genres = $2,
+          year = $3
+        WHERE
+          id = $4
+        `,
+        [title, genres, year, id]
+      );
+
+      return result;
+    }
+  } catch (error) {
+    return error;
   }
 };
 
@@ -34,8 +83,26 @@ const upload = async (id, source) => {
 
     return result;
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    return error;
   }
 };
 
-module.exports = { findAll, upload };
+const remove = async (id) => {
+  try {
+    const result = await pool.query(
+      `
+      DELETE FROM
+        movies
+      WHERE
+        id = $1
+      `,
+      [id]
+    )
+
+    return result;
+  } catch (error) {
+    return error;
+  }
+}
+
+module.exports = { findAll, upload, update, remove, add };
