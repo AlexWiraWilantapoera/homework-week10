@@ -1,9 +1,11 @@
 const router = require("express").Router();
 
-const { getMovies, uploadPhoto, updateMovie, removeMovie, addMovie } = require("../controllers/movie.controller.js");
+const { getMovies, getMoviesDetail, uploadPhoto, updateMovie, removeMovie, addMovie } = require("../controllers/movie.controller.js");
 const multer = require("../middlewares/multer.js");
 
 router.get("/", getMovies);
+
+router.get("/:id", getMoviesDetail);
 
 router.post("/add", addMovie);
 

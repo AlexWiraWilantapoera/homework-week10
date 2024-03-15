@@ -6,6 +6,8 @@ const findAll = async (req, res) => {
       *
     FROM
       users
+    ORDER BY
+      id ASC
   `;
   try {
     const data = await pool.query(sql);
@@ -13,6 +15,24 @@ const findAll = async (req, res) => {
     return data;
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const findOne = async (id) => {
+  const sql = `
+    SELECT
+      *
+    FROM
+      users
+    WHERE
+      id = $1
+  `;
+  try {
+    const data = await pool.query(sql, [id]);
+
+    return data;
+  } catch (error) {
+    return error;
   }
 };
 
@@ -31,8 +51,6 @@ const add = async (email, gender, password, role) => {
         `,
         [email, gender, password, role]
       );
-
-      return result;
     }
   } catch (error) {
     return error;
@@ -55,8 +73,7 @@ const update = async (id, email, gender, password, role) => {
         `,
       [email, gender, password, role, id]
     );
-
-    return result;
+    
   } catch (error) {
     return error;
   }
@@ -74,10 +91,9 @@ const remove = async (id) => {
       [id]
     );
 
-    return result;
   } catch (error) {
     return error;
   }
 };
 
-module.exports = { findAll, update, remove, add };
+module.exports = { findAll, findOne, update, remove, add };

@@ -1,14 +1,34 @@
 const pool = require("../config/config.js");
 
-const findAll = async (req, res) => {
+const findAll = async () => {
   const sql = `
     SELECT
       *
     FROM
       movies
+    ORDER BY
+      id ASC
   `;
   try {
     const data = await pool.query(sql);
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const findOne = async (id) => {
+  const sql = `
+    SELECT
+      *
+    FROM
+      movies
+    WHERE
+      id = $1
+  `;
+  try {
+    const data = await pool.query(sql, [id]);
 
     return data;
   } catch (error) {
@@ -32,7 +52,6 @@ const add = async(title, genres, year) =>{
         [title, genres, year]
       )
 
-      return result;
     }
   } catch (error) {
     return error;
@@ -58,7 +77,6 @@ const update = async (id, title, genres, year) => {
         [title, genres, year, id]
       );
 
-      return result;
     }
   } catch (error) {
     return error;
@@ -79,9 +97,6 @@ const upload = async (id, source) => {
       [source, id]
     );
 
-    console.log(source);
-
-    return result;
   } catch (error) {
     return error;
   }
@@ -97,12 +112,11 @@ const remove = async (id) => {
         id = $1
       `,
       [id]
-    )
+    );
 
-    return result;
   } catch (error) {
     return error;
   }
 }
 
-module.exports = { findAll, upload, update, remove, add };
+module.exports = { findAll, findOne, upload, update, remove, add };
