@@ -1,9 +1,32 @@
 const pool = require("../config/config.js");
 
+const loginData = async (email, password) => {
+  try {
+    const result = await pool.query(
+      `
+        SELECT
+          id, email, gender, role
+        FROM
+          users
+        WHERE
+          email = $1
+        AND
+          password = $2
+      `,
+      [email, password]
+    );
+  
+    return result.rows[0];
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+  
+};
+
 const findAll = async (req, res) => {
   const sql = `
     SELECT
-      *
+      id, email, gender, role
     FROM
       users
     ORDER BY
@@ -21,7 +44,7 @@ const findAll = async (req, res) => {
 const findOne = async (id) => {
   const sql = `
     SELECT
-      *
+      id, email, gender, role
     FROM
       users
     WHERE
@@ -73,7 +96,6 @@ const update = async (id, email, gender, password, role) => {
         `,
       [email, gender, password, role, id]
     );
-    
   } catch (error) {
     return error;
   }
@@ -90,10 +112,9 @@ const remove = async (id) => {
       `,
       [id]
     );
-
   } catch (error) {
     return error;
   }
 };
 
-module.exports = { findAll, findOne, update, remove, add };
+module.exports = { loginData, findAll, findOne, update, remove, add };
